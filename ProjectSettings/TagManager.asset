@@ -7,6 +7,10 @@ TagManager:
   - Feet
   - Loading Screen
   - Death Screen
+  - Impassable
+  - Camera Bounds
+  - Enemy
+  - Enemy Projectile
   layers:
   - Default
   - TransparentFX
@@ -16,12 +20,12 @@ TagManager:
   - UI
   - 
   - 
-  - Props
+  - PropSprites
   - Impassable
   - Enemy
   - Player
-  - 
-  - 
+  - CameraBounds
+  - EnemyProjectile
   - 
   - 
   - 

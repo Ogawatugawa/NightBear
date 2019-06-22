@@ -12,13 +12,6 @@ public class SockSnake : Enemy
     private bool IsLunging = false;
     private bool IsAttacking = false;
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(localHitboxPos, hitboxRadius);
-        Gizmos.DrawSphere(attackTargetPos, 0.1f);
-    }
-
     public void MouthHitbox()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(localHitboxPos, hitboxRadius);
@@ -31,8 +24,6 @@ public class SockSnake : Enemy
                 playerPos.y += 0.25f;
                 Vector2 direction = (localHitboxPos - playerPos).normalized * -1f;
                 Vector2 force = direction * knockbackForce * Time.deltaTime;
-
-                Debug.DrawRay(transform.position, direction);
 
                 player.TakeDamageWithKnockback(damage, force);
             }
@@ -52,10 +43,10 @@ public class SockSnake : Enemy
 
         if (attackCooldownTimer >= attackCooldownMax)
         {
-            StartCoroutine(AttackDelays(attackStartDelay, attackEndDelay));
+            StartCoroutine(AttackWithDelays(attackStartDelay, attackEndDelay));
         }
 
-        if (attackCooldownTimer < attackCooldownMax)
+        else
         {
             direction = ((Vector2)target.transform.position - rigid.position).normalized;
             rend.flipX = attackDirection.x > 0.1f;
@@ -71,6 +62,30 @@ public class SockSnake : Enemy
                 MouthHitbox();
             }
         }
+    }
+
+    public override void Death()
+    {
+        base.Death();
+        // Play death animation
+        anim.SetTrigger("IsDead");
+        // Destroy this script
+        StartCoroutine(DestroyDelay(deathDelay));
+    }
+
+    IEnumerator DestroyDelay(float delay)
+    {
+        // Make the enemy's corpse it's regular colour
+        Color flashColor = rend.color;
+        flashColor.b = 1;
+        flashColor.g = 1;
+        rend.color = flashColor;
+        // Wait for delay to allow functions to finish
+        yield return new WaitForSeconds(delay);
+        // Make the enemy's corpse's rigidbody Static so it stops affecting physics
+        rigid.bodyType = RigidbodyType2D.Static;
+        // Destroy this script
+        Destroy(this);
     }
 
     public override void Update()

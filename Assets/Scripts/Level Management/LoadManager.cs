@@ -15,7 +15,7 @@ public class LoadManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cam = GameObject.Find("Cinemachine VMCam").GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineFramingTransposer>();
+
         loadingPanel = GameObject.FindGameObjectWithTag("Loading Screen").GetComponent<Image>();
     }
 

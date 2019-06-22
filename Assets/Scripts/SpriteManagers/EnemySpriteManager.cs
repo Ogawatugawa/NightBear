@@ -12,16 +12,23 @@ public class EnemySpriteManager : MonoBehaviour
     void Start()
     {
         rend = GetComponentInParent<SpriteRenderer>();
-        shadow = transform.Find("Shadow").GetComponent<SpriteRenderer>();
         enemyBox = transform.Find("Movement Collider").GetComponent<Collider2D>();
+
+        if (CompareTag("Enemy"))
+        {
+            shadow = transform.Find("Shadow").GetComponent<SpriteRenderer>();
+        }
     }
 
     void Update()
     {
         yPos = enemyBox.bounds.center.y;
-        if (shadow.sortingOrder != rend.sortingOrder - 1)
+        if (CompareTag("Enemy"))
         {
-            shadow.sortingOrder = rend.sortingOrder - 1;
+            if (shadow.sortingOrder != rend.sortingOrder - 1)
+            {
+                shadow.sortingOrder = rend.sortingOrder - 1;
+            } 
         }
     }
 

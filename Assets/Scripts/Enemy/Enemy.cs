@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Pathfinding;
 
-[RequireComponent(typeof(Rigidbody2D))]
+
 public abstract class Enemy : MonoBehaviour
 {
     [Header("Enemy Health")]
@@ -16,18 +15,15 @@ public abstract class Enemy : MonoBehaviour
     protected float moveSpeed;
     public Rigidbody2D rigid;
     protected SpriteRenderer rend;
+    protected Vector2 destination, direction, force;
 
     [Header("Enemy Attack")]
     public int damage;
     public float knockbackForce;
-    public float attackStartDelay;
-    public float attackEndDelay;
-    public float attackCooldownMax = 2f;
-    protected float attackCooldownTimer = 0f;
-    protected bool AttackMode = false;
-    protected bool CanAttack = true;
-    protected Vector2 attackTargetPos;
-    protected Vector2 attackDirection;
+    public float attackStartDelay, attackEndDelay, attackCooldownMax = 2f;
+    public float attackCooldownTimer = 0f;
+    protected bool AttackMode = false, CanAttack = true;
+    protected Vector2 attackTargetPos, attackDirection;
 
     [Header("Enemy AI")]
     public EnemyState state;
@@ -36,22 +32,19 @@ public abstract class Enemy : MonoBehaviour
     public float waypointDist;
     public GameObject waypointParentPrefab;
     public GameObject waypointPrefab;
-    protected Transform target;
+    public Transform target;
     private GameObject waypointParent;
     private Transform[] idleWaypoints;
     private Path path;
     private int waypointIndex = 0;
     private bool PathFinished = false;
     private Seeker seeker;
-    private float updateTimer = 0;
-    private float updateTimerMax = 0.5f;
+    private float updateTimer = 0, updateTimerMax = 0.5f;
     private CircleCollider2D detectionCollider;
 
-    [Header("Movement Vectors")]
-    protected Vector2 destination;
-    protected Vector2 direction, force;
-
     [Header("Animation")]
+    public int deathFlashes;
+    public float deathDelay;
     protected Animator anim;
     protected bool FlashUp;
     protected bool IsDying;
@@ -59,25 +52,22 @@ public abstract class Enemy : MonoBehaviour
     private int flashCountMax;
 
     #region Start and Update
-
-
     public virtual void Start()
     {
-        target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-
         CreateWaypoints();
 
+        anim = GetComponent<Animator>();
         rend = GetComponent<SpriteRenderer>();
-        seeker = GetComponent<Seeker>();
         rigid = GetComponent<Rigidbody2D>();
+        seeker = GetComponent<Seeker>();
+        
+        target = GameObject.FindGameObjectWithTag("Player").transform;
 
         attackCooldownTimer = attackCooldownMax;
         AttackMode = false;
         CanAttack = true;
 
         flashCount = flashCountMax;
-
-        anim = GetComponent<Animator>();
     }
 
     public virtual void Update()
@@ -102,7 +92,7 @@ public abstract class Enemy : MonoBehaviour
     }
     #endregion
 
-    #region Damage/Death Functions and Enumerators
+    #region Damage/Death Functions
     public virtual void TakeDamage(int damage)
     {
         // Take damage
@@ -110,7 +100,6 @@ public abstract class Enemy : MonoBehaviour
         // Set flash count to 0 to begin damage flash function
         flashCount = 0;
         flashCountMax = 2;
-
         if (currentEnemyHealth <= 0 && !IsDying)
         {
             Death();
@@ -119,17 +108,16 @@ public abstract class Enemy : MonoBehaviour
 
     public virtual void Death()
     {
-        flashCountMax = 4;
+        // Make sure the moving animation stops playing
+        anim.SetBool("IsMoving", false);
+        // Start flashing
+        flashCountMax = deathFlashes;
         // Stop moving
         rigid.velocity = Vector2.zero;
-        // Play death animation
-        anim.SetTrigger("IsDead");
         // Turn movement collider into trigger
         Collider2D col = transform.Find("SpriteManager").transform.Find("Movement Collider").GetComponent<Collider2D>();
         col.isTrigger = true;
         IsDying = true;
-        // Destroy this script
-        StartCoroutine(DestroyDelay(1f));
     }
 
     public virtual void DamageFlash()
@@ -168,23 +156,16 @@ public abstract class Enemy : MonoBehaviour
         }
         rend.color = flashColor;
     }
-
-    IEnumerator DestroyDelay(float delay)
-    {
-        Color flashColor = rend.color;
-        flashColor.b = 1;
-        flashColor.g = 1;
-        rend.color = flashColor;
-        yield return new WaitForSeconds(delay);
-        rigid.bodyType = RigidbodyType2D.Static;
-        Destroy(this);
-    }
     #endregion
 
     #region Attack Functions and Enumerators
     public virtual void Attack()
     {
-        anim.SetBool("IsMoving", false);
+        if (anim.GetBool("IsMoving"))
+        { 
+            anim.SetBool("IsMoving", false); 
+        }
+
     }
 
     public virtual void AttackChecks()
@@ -214,7 +195,7 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
-    public virtual IEnumerator AttackDelays(float startDelay, float endDelay)
+    public virtual IEnumerator AttackWithDelays(float startDelay, float endDelay)
     {
         attackCooldownTimer = 0f;
         if (attackTargetPos == Vector2.zero)
@@ -229,11 +210,11 @@ public abstract class Enemy : MonoBehaviour
         attackTargetPos = Vector2.zero;
         UpdatePath();
         AttackMode = false;
-        print("Not attacking");
     }
     #endregion
 
     #region Movement and PathFinding
+    // THIS FUNCTION MOVES THE ENEMY WITH THE RIGIDBODY AND SETS THE ANIMATOR TO MOVE 
     public virtual void Move(Vector2 force)
     {
         anim.SetBool("IsMoving", true);
@@ -296,14 +277,14 @@ public abstract class Enemy : MonoBehaviour
         idleWaypoints = waypointParent.GetComponentsInChildren<Transform>();
     }
 
-    // THIS FUNCTION SETS THE ENEMY'S SPEED AND SETS ITS DESTINATION AS THE NEXT WAYPOINT IN THE IDLE WAYPOINT GROUP
+    // THIS FUNCTION SETS THE ENEMY'S DESTINATION AS THE NEXT WAYPOINT IN THE IDLE WAYPOINT GROUP
     void Idle()
     {
         moveSpeed = idleSpeed;
         destination = idleWaypoints[waypointIndex].position;
     }
 
-    // THIS FUNCTION SETS THE ENEMY'S SPEED AND SETS ITS DESTINATION AS THE NEXT WAYPOINT IN THE AI PATH
+    // THIS FUNCTION SETS THE ENEMY'S DESTINATION AS THE NEXT WAYPOINT IN THE AI PATH
     void Pursue()
     {
         UpdatePath();

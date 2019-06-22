@@ -18,6 +18,7 @@ public class PlayerSpriteManager : MonoBehaviour
 
     void Update()
     {
+        print(yPos);
         yPos = playerBox.bounds.center.y;
         if (shadow.sortingOrder != rend.sortingOrder)
         {
