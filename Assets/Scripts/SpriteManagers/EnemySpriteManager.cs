@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Vin Tansiri
+//Title: EnemySpriteManager.cs
+//Date: 09 June 2019
+//==================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,6 +39,69 @@ public class EnemySpriteManager : MonoBehaviour
     }
 
     private void OnTriggerStay2D(Collider2D other)
+    {
+        PlayerSpriteManager player = other.GetComponent<PlayerSpriteManager>();
+        if (player)
+        {
+            if (yPos < player.yPos)
+            {
+                if (rend.sortingOrder <= player.rend.sortingOrder)
+                {
+                    rend.sortingOrder = player.rend.sortingOrder + 1;
+                }
+            }
+
+            else if (yPos >= player.yPos)
+            {
+                if (rend.sortingOrder >= player.rend.sortingOrder)
+                {
+                    rend.sortingOrder = player.rend.sortingOrder - 1;
+                }
+            }
+        }
+
+        PropSpriteManager prop = other.GetComponent<PropSpriteManager>();
+        if (prop)
+        {
+            if (yPos < prop.yPos)
+            {
+                if (rend.sortingOrder <= prop.rend.sortingOrder)
+                {
+                    rend.sortingOrder = prop.rend.sortingOrder + 1;
+                }
+            }
+
+            else if (yPos >= prop.yPos)
+            {
+                if (rend.sortingOrder >= prop.rend.sortingOrder)
+                {
+                    rend.sortingOrder = prop.rend.sortingOrder - 1;
+                }
+            }
+        }
+
+        EnemySpriteManager enemy = other.GetComponent<EnemySpriteManager>();
+        if (enemy)
+        {
+            if (yPos < enemy.yPos)
+            {
+                if (rend.sortingOrder <= enemy.rend.sortingOrder)
+                {
+                    rend.sortingOrder = enemy.rend.sortingOrder + 1;
+                }
+            }
+
+            else if (yPos >= enemy.yPos)
+            {
+                if (rend.sortingOrder >= enemy.rend.sortingOrder)
+                {
+                    rend.sortingOrder = enemy.rend.sortingOrder - 1;
+                }
+            }
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
         PlayerSpriteManager player = other.GetComponent<PlayerSpriteManager>();
         if (player)

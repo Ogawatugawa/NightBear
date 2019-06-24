@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Alex Liu, Vin Tansiri
+//Title: RoboBoy.cs
+//Date: 15 June 2019
+//==================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Alex Liu, Vin Tansiri
+//Title: RoboBoy.cs
+//Date: 15 June 2019
+//==================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
@@ -75,14 +81,14 @@ public class RoboBoy : Enemy
             }
         }
 
-        else if (distanceToTarget < attackAttemptRadius)
+        else if (distanceToTarget < attackAttemptRadius/2)
         {
             direction = (transform.position - target.position).normalized;
             force = direction * moveSpeed * Time.deltaTime;
             Move(force);
         }
 
-        else if (distanceToTarget < attackAttemptRadius + 0.5f && distanceToTarget > attackAttemptRadius - 0.5f)
+        else if (distanceToTarget < (attackAttemptRadius/3)*2 + 0.25f && distanceToTarget > (attackAttemptRadius/3)*2 - 0.25f)
         {
             return;
         }

@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Vin Tansiri, Wendy Tu, Ozair Zaman
+//Title: SockSnake.cs
+//Date: 8 June 2019
+//==================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;

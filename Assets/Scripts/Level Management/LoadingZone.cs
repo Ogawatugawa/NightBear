@@ -1,4 +1,11 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Vin Tansiri
+//Title: LoadingZone.cs
+//Date: 11 June 2019
+//==================================
+
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;

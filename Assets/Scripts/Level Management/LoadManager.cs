@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Vin Tansiri
+//Title: LoadManager.cs
+//Date: 11 June 2019
+//==================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,7 +12,7 @@ using Cinemachine;
 using UnityEngine.SceneManagement;
 public class LoadManager : MonoBehaviour
 {
-    public CinemachineFramingTransposer cam;
+    public LoadManager instance;
     public Image loadingPanel;
     public Transform exitPoint;
     public LoadState state = LoadState.NotLoading;
@@ -16,6 +22,10 @@ public class LoadManager : MonoBehaviour
     void Start()
     {
         loadingPanel = GameObject.FindGameObjectWithTag("Loading Screen").GetComponent<Image>();
+        Color color = loadingPanel.color;
+        color.a = 1;
+        loadingPanel.color = color;
+        state = LoadState.LoadOut;
     }
 
     // Update is called once per frame
@@ -44,8 +54,12 @@ public class LoadManager : MonoBehaviour
 
                 else if (!HasDelayed)
                 {
-                    StartCoroutine(LoadOutStartDelay(0.75f));
+                    if (currentScene != "StartMenu")
+                    {
+                        StartCoroutine(LoadOutStartDelay(0.75f)); 
+                    }
                 }
+
                 break;
             case LoadState.LoadOut:
                 if (color.a > 0)

@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Vin Tansiri
+//Title: PlayerSpriteManager.cs
+//Date: 25 May 2019
+//==================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

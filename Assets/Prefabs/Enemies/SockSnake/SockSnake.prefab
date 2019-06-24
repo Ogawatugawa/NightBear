@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e45a8e3a4a271147a697ae26d386826, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentEnemyHealth: 10
+  currentEnemyHealth: 12
   idleSpeed: 40
   pursueSpeed: 70
   rigid: {fileID: 0}

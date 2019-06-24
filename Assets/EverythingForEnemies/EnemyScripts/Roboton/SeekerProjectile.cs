@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Alex Liu
+//Title: SeekerProjectile.cs
+//Date: 04 June 2019
+//==================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//==================================
+//Author: Vin Tansiri
+//Title: PlayerAttack.cs
+//Date: 18 May 2019
+//==================================
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
