@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class MenuManager : MonoBehaviour
 {
     public Image loadingScreen;
+    public bool IsLoading;
 
     public void Awake()
     {
@@ -15,5 +16,13 @@ public class MenuManager : MonoBehaviour
     public void ChangeScene (int index)
     {
         SceneManager.LoadScene(index);
+    }
+
+    private void Update()
+    {
+        if(IsLoading)
+        {
+
+        }
     }
 }

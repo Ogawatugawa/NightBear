@@ -95,14 +95,17 @@ public abstract class Enemy : MonoBehaviour
     #region Damage/Death Functions
     public virtual void TakeDamage(int damage)
     {
-        // Take damage
-        currentEnemyHealth -= damage;
-        // Set flash count to 0 to begin damage flash function
-        flashCount = 0;
-        flashCountMax = 2;
-        if (currentEnemyHealth <= 0 && !IsDying)
+        if (!IsDying)
         {
-            Death();
+            // Take damage
+            currentEnemyHealth -= damage;
+            // Set flash count to 0 to begin damage flash function
+            flashCount = 0;
+            flashCountMax = 2;
+            if (currentEnemyHealth <= 0)
+            {
+                Death();
+            } 
         }
     }
 
@@ -335,4 +338,4 @@ public abstract class Enemy : MonoBehaviour
     }
     #endregion
 }
-public enum EnemyState { Idle, Pursue }
+public enum EnemyState { Idle, Pursue, Retreat}

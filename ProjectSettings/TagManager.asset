@@ -11,6 +11,7 @@ TagManager:
   - Camera Bounds
   - Enemy
   - Enemy Projectile
+  - Pause Screen
   layers:
   - Default
   - TransparentFX

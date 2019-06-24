@@ -23,7 +23,7 @@ public class EnemySpriteManager : MonoBehaviour
     void Update()
     {
         yPos = enemyBox.bounds.center.y;
-        if (CompareTag("Enemy"))
+        if (shadow)
         {
             if (shadow.sortingOrder != rend.sortingOrder - 1)
             {

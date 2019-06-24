@@ -24,7 +24,7 @@ public class RoboBoy : Enemy
     public override void Start()
     {
         base.Start();
-        eyes = GameObject.Find("Eyes").transform;
+        eyes = transform.Find("Eyes").transform;
     }
 
     public override void Move(Vector2 force)
@@ -57,7 +57,6 @@ public class RoboBoy : Enemy
 
     public override void Attack()
     {
-        print(rigid.velocity);
         base.Attack();
 
         float distanceToTarget = Vector2.Distance(transform.position, target.transform.position);
@@ -68,19 +67,24 @@ public class RoboBoy : Enemy
             if (CanAttack)
             {
                 CanAttack = false;
-                attackTargetPos = target.position;
-                attackDirection = (attackTargetPos - rigid.position).normalized;
-                rend.flipX = attackDirection.x < 0f;
+                GetTargetPos();
                 anim.SetTrigger("EnemyAttack");
+                StartCoroutine(ShootLaserWithDelay(0.6f));
+                StartCoroutine(ShootLaserWithDelay(1.27f));
+                StartCoroutine(MoveAfterAttack(1.5f));
             }
         }
 
         else if (distanceToTarget < attackAttemptRadius)
         {
-            print("Running away between attacks");
             direction = (transform.position - target.position).normalized;
             force = direction * moveSpeed * Time.deltaTime;
             Move(force);
+        }
+
+        else if (distanceToTarget < attackAttemptRadius + 0.5f && distanceToTarget > attackAttemptRadius - 0.5f)
+        {
+            return;
         }
 
         else
@@ -89,21 +93,35 @@ public class RoboBoy : Enemy
         }
     }
 
-    public void ShootLaser()
+    IEnumerator ShootLaserWithDelay(float delay)
     {
-        GameObject laser = Instantiate(laserPrefab, eyes.position, Quaternion.identity);
-        Projectile projectile = laser.GetComponent<Projectile>();
-        projectile.transform.up = (Vector3)projectile.targetPos + projectile.transform.position;
-        projectile.damage = damage;
-        projectile.knockbackForce = knockbackForce;
-        projectile.speed = laserSpeed;
-        projectile.targetPos = attackTargetPos;
+        print("shooting laser");
+        yield return new WaitForSeconds(delay);
+        if (!IsDying)
+        {
+            GameObject laser = Instantiate(laserPrefab, eyes.position, Quaternion.identity);
+            Projectile projectile = laser.GetComponent<Projectile>();
+            projectile.transform.up = (Vector3)projectile.targetPos + projectile.transform.position;
+            projectile.damage = damage;
+            projectile.knockbackForce = knockbackForce;
+            projectile.speed = laserSpeed;
+            projectile.targetPos = attackTargetPos; 
+        }
     }
 
-    public void MoveAfterAttack()
+    IEnumerator MoveAfterAttack(float delay)
     {
+        yield return new WaitForSeconds(delay);
         attackCooldownTimer = 0f;
         CanAttack = true;
+    }
+
+    public void GetTargetPos()
+    {
+        print("Getting target");
+        attackTargetPos = target.position;
+        attackDirection = (attackTargetPos - rigid.position).normalized;
+        rend.flipX = attackDirection.x < 0f;
     }
 
     public override void Death()
@@ -132,9 +150,11 @@ public class RoboBoy : Enemy
                 Vector2 force = direction * knockbackForce * Time.deltaTime;
 
                 player.TakeDamageWithKnockback(explosionDamage, force);
-            }
-
+            } 
         }
+
+        GameObject shadow = transform.Find("SpriteManager").transform.Find("Shadow").gameObject;
+        Destroy(shadow);
     }
 
     private void OnDrawGizmos()

@@ -52,7 +52,6 @@ public class Projectile : MonoBehaviour
         if(collision.CompareTag("Camera Bounds"))
         {
             Destroy(gameObject);
-            print(collision);
         }
     }
 }

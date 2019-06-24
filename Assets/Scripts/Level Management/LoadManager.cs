@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
-
+using UnityEngine.SceneManagement;
 public class LoadManager : MonoBehaviour
 {
     public CinemachineFramingTransposer cam;
@@ -15,7 +15,6 @@ public class LoadManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         loadingPanel = GameObject.FindGameObjectWithTag("Loading Screen").GetComponent<Image>();
     }
 
@@ -23,6 +22,8 @@ public class LoadManager : MonoBehaviour
     void Update()
     {
         Color color = loadingPanel.color;
+        string currentScene = SceneManager.GetActiveScene().name;
+
         switch (state)
         {
             case LoadState.LoadIn:
@@ -31,11 +32,14 @@ public class LoadManager : MonoBehaviour
                     color.a += 2 * Time.deltaTime;
                     loadingPanel.color = color;
 
-                    player = GameObject.FindGameObjectWithTag("Player");
-                    float moveSpeed = player.GetComponent<Player>().moveSpeed;
-                    Player.CanMove = false;
-                    Player.isDodging = false;
-                    Player.motion = Player.direction * moveSpeed;
+                    if (currentScene != "StartMenu")
+                    {
+                        player = GameObject.FindGameObjectWithTag("Player");
+                        float moveSpeed = player.GetComponent<Player>().moveSpeed;
+                        Player.CanMove = false;
+                        Player.isDodging = false;
+                        Player.motion = Player.direction * moveSpeed;
+                    }
                 }
 
                 else if (!HasDelayed)
@@ -46,10 +50,14 @@ public class LoadManager : MonoBehaviour
             case LoadState.LoadOut:
                 if (color.a > 0)
                 {
-                    Player.CanMove = true;
-                    Player.motion = Vector2.zero;
                     color.a -= 2 * Time.deltaTime;
                     loadingPanel.color = color;
+
+                    if (currentScene != "StartMenu")
+                    {
+                        Player.CanMove = true;
+                        Player.motion = Vector2.zero; 
+                    }
                 }
                 else
                 {
