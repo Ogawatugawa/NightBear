@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
@@ -15,7 +16,7 @@ public class Player : MonoBehaviour
     [Header("Health")]
     public int curHealth = 6;
     public int maxHealth = 6;
-    public float knockbackTime =  0.25f;
+    public float knockbackTime = 0.25f;
     public float postHitInvincibility = 0.75f;
     public Image[] healthPips;
     public bool CanBeDamaged = true;
@@ -125,7 +126,7 @@ public class Player : MonoBehaviour
     {
         rb.bodyType = RigidbodyType2D.Static;
         anim.SetTrigger("IsDying");
-        StartCoroutine(EndDeath(0.5f));
+        StartCoroutine(EndDeath(0.5f, 2f));
     }
 
     public void DodgeBool()
@@ -203,14 +204,14 @@ public class Player : MonoBehaviour
         IsFlashing = false;
         if (!isDodging)
         {
-            CanBeDamaged = true; 
+            CanBeDamaged = true;
         }
     }
 
-    IEnumerator EndDeath (float time)
+    IEnumerator EndDeath(float delay1, float delay2)
     {
         IsFlashing = true;
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(delay1);
         IsFlashing = false;
         Color flashColor = rend.color;
         if (flashColor.b != 1)
@@ -219,14 +220,15 @@ public class Player : MonoBehaviour
         }
         if (flashColor.g != 1)
         {
-            flashColor.g = 1; 
+            flashColor.g = 1;
         }
         rend.color = flashColor;
 
         CanvasManager cm = GameObject.Find("Managers").GetComponent<CanvasManager>();
         cm.DeathScreenOn = true;
-
-        Destroy(this);
+        yield return new WaitForSeconds(delay2);
+        print("resetting");
+        SceneManager.LoadScene(1);
     }
     #endregion
 
